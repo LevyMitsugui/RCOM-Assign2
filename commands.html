@@ -34,6 +34,7 @@
   <div class="tab active" data-tab="linux">Linux (Tux)</div>
   <div class="tab" data-tab="mikrotik">MikroTik Router</div>
   <div class="tab" data-tab="switch">Switch</div>
+  <div class="tab" data-tab="Bash Files">Bash Files</div>
 </div>
 
 
@@ -174,7 +175,25 @@
   </div>
 </div>
 
+<div id="Bash Files" class="tab-content">
+    <div class="cmd-block">
+    <a href="https://github.com/LevyMitsugui/RCOM-Assign2/blob/main/BashScripts/configure_network._TUX2.sh" download>
+        <button>Download TUX2 Config Bash</button>
+    </a> </div> 
+    <div class="cmd-block"><a href="https://github.com/LevyMitsugui/RCOM-Assign2/blob/main/BashScripts/configure_network_TUX3.sh" download>
+        <button>Download TUX3 Config Bash</button>
+    </a></div>
+    <div class="cmd-block"><a href="https://github.com/LevyMitsugui/RCOM-Assign2/blob/main/BashScripts/configure_network_TUX4.sh" download>
+        <button>Download TUX4 Config Bash</button>
+    </a></div>
+    <div class="cmd-block"><a href="https://github.com/LevyMitsugui/RCOM-Assign2/blob/main/BashScripts/configure_Router.sh" download>
+        <button>Download Router Config Bash</button>
+    </a></div>
+    <div class="cmd-block"><a href="https://github.com/LevyMitsugui/RCOM-Assign2/blob/main/BashScripts/configure_Switch.sh" download>
+        <button>Download Switch Config Bash</button>
+    </a></div>
 
+</div>
 
 <script>
   // Tabs
@@ -280,6 +299,7 @@
         select.appendChild(opt);
     }
   }
+ 
 
     function updateSwitchCommands() {
     const Y = parseInt(workbenchInput.value);
