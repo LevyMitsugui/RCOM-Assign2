@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Command Snippets</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .header { display: flex; align-items: center; margin-bottom: 20px; gap: 10px; }
+    .tabs { display: flex; border-bottom: 2px solid #ccc; cursor: pointer; }
+    .tab { padding: 10px 20px; border: 1px solid #ccc; border-bottom: none; margin-right: 5px; background: #f2f2f2; }
+    .tab.active { background: white; font-weight: bold; }
+    .tab-content { display: none; border: 1px solid #ccc; padding: 20px; background: white; }
+    .tab-content.active { display: block; }
+    .cmd-block { position: relative; background: #eee; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px; padding: 5px 10px;
+      background: #007BFF; color: white; border: none; cursor: pointer; border-radius: 3px;
+    }
+    .copy-btn:hover { background: #0056b3; }
+    code { white-space: pre-wrap; }
+    .inline-select { margin-left: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- Workbench number input -->
+<div class="header">
+  <label for="workbench">Workbench Number (Y):</label>
+  <input type="number" id="workbench" min="0" value="5">
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" data-tab="linux">Linux (Tux)</div>
+  <div class="tab" data-tab="mikrotik">MikroTik Router</div>
+  <div class="tab" data-tab="switch">Switch</div>
+</div>
+
+
+<!-- Linux Tab -->
+<div id="linux" class="tab-content active">
+  <div class="cmd-block"><code id="restartNetwork">systemctl restart networking</code><button class="copy-btn" onclick="copyDynamic('restartNetwork')">Copy</button></div>
+
+  <div class="cmd-block"><code id="ipShow">ip addr show</code><button class="copy-btn" onclick="copyDynamic('ipShow')">Copy</button></div>
+
+  <div class="cmd-block"><code id="eth1up">ifconfig eth1 up</code><button class="copy-btn" onclick="copyDynamic('eth1up')">Copy</button></div>
+  <div class="cmd-block"><code id="eth2up">ifconfig eth2 up</code><button class="copy-btn" onclick="copyDynamic('eth2up')">Copy</button></div>
+
+    <!-- if config, configure IP -->
+  <div class="cmd-block">
+    <code id="ifConfigCommand">ifconfig eth1 172.16.Y0.1/24</code><br>
+    <label>interface:</label>
+    <select id="ifConfigInterface" class="inline-select">
+      <option value="eth1">eth1</option>
+      <option value="eth2">eth2</option>
+    </select>
+    <label>Gateway:</label>
+    <select id="ifConfigIP" class="inline-select">
+      <option value="172.16.Y0.1/24">TUX3 (eth1)</option>
+      <option value="172.16.Y1.1/24">TUX2 (eth1)</option>
+      <option value="172.16.Y0.254/24">TUX4 (eth1)</option>
+      <option value="172.16.Y1.253/24">TUX4 (eth2)</option>
+    </select>
+    <button class="copy-btn" onclick="copyDynamic('ifConfigCommand')">Copy</button>
+  </div>
+
+  <!-- Dynamic ip route add -->
+  <div class="cmd-block">
+    <code id="routeAdd">sudo ip route add 172.16.1.0/24 via 172.16.50.254</code><br>
+    <label>Destination:</label>
+    <select id="routeDest" class="inline-select">
+      <option value="172.16.1.0/24">172.16.1.0/24</option>
+      <option value="172.16.Y0.0/24">172.16.Y0.0/24</option>
+      <option value="172.16.Y1.0/24">172.16.Y1.0/24</option>
+    </select>
+    <label>Gateway:</label>
+    <select id="routeGW" class="inline-select">
+      <option value="TUX4_1">TUX4 (eth1)</option>
+      <option value="TUX4_2">TUX4 (eth2)</option>
+      <option value="Rc_Y1">Router Rc (Y1)</option>
+      <option value="Rc_FTP">Router Rc (FTP)</option>
+    </select>
+    <button class="copy-btn" onclick="copyDynamic('routeAdd')">Copy</button>
+  </div>
+
+  <!-- Dynamic ip route del -->
+  <div class="cmd-block">
+    <code id="routeDel">sudo ip route del 172.16.1.0/24</code><br>
+    <label>Destination:</label>
+    <select id="routeDelDest" class="inline-select">
+      <option value="172.16.1.0/24">172.16.1.0/24</option>
+      <option value="172.16.Y0.0/24">172.16.Y0.0/24</option>
+      <option value="172.16.Y1.0/24">172.16.Y1.0/24</option>
+    </select>
+    <button class="copy-btn" onclick="copyDynamic('routeDel')">Copy</button>
+  </div>
+
+  <div class="cmd-block"><code>sudo sysctl -w net.ipv4.ip_forward=1</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code># Add to /etc/sysctl.conf:\nnet.ipv4.ip_forward=1</code><button class="copy-btn">Copy</button></div>
+
+  <!-- Dynamic ping -->
+  <div class="cmd-block">
+    <code id="pingCommand">ping 172.16.50.1</code>
+    <select id="host" class="inline-select">
+      <option value="TUX3">TUX3 (eth1)</option>
+      <option value="TUX4_1">TUX4 (eth1)</option>
+      <option value="TUX2">TUX2 (eth1)</option>
+      <option value="TUX4_2">TUX4 (eth2)</option>
+      <option value="Rc_Y1">Router Rc (Y1)</option>
+      <option value="Rc_FTP">Router Rc (FTP side)</option>
+      <option value="FTP">FTP Server</option>
+    </select>
+    <button class="copy-btn" onclick="copyPing()">Copy</button>
+  </div>
+</div>
+
+<!-- MikroTik Tab -->
+<div id="mikrotik" class="tab-content">
+  <div class="cmd-block"><code>/ip address print</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip address add address=&lt;ip&gt;/24 interface=&lt;interface&gt;</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip address remove &lt;number&gt;</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip route print</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip route add dst-address=&lt;subnet&gt; gateway=&lt;next_hop_ip&gt;</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip route remove &lt;number&gt;</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip firewall nat add chain=srcnat out-interface=&lt;wan_interface&gt; action=masquerade</code><button class="copy-btn">Copy</button></div>
+  <div class="cmd-block"><code>/ip arp print</code><button class="copy-btn">Copy</button></div>
+
+  <!-- Dynamic MikroTik ping -->
+  <div class="cmd-block">
+    <code id="pingMT">ping 172.16.50.1</code>
+    <select id="hostMT" class="inline-select">
+      <option value="TUX3">TUX3 (eth1)</option>
+      <option value="TUX4_1">TUX4 (eth1)</option>
+      <option value="TUX2">TUX2 (eth1)</option>
+      <option value="TUX4_2">TUX4 (eth2)</option>
+      <option value="Rc_Y1">Router Rc (Y1)</option>
+      <option value="Rc_FTP">Router Rc (FTP side)</option>
+      <option value="FTP">FTP Server</option>
+    </select>
+    <button class="copy-btn" onclick="copyPingMT()">Copy</button>
+  </div>
+</div>
+
+<div id="switch" class="tab-content">
+  <!-- Dynamic: Create bridges -->
+  <div class="cmd-block">
+    <code id="bridgeCreate">/interface bridge add name=bridge50</code>
+    <button class="copy-btn" onclick="copyDynamic('bridgeCreate')">Copy</button>
+  </div>
+  <div class="cmd-block">
+    <code id="bridgeCreate2">/interface bridge add name=bridge51</code>
+    <button class="copy-btn" onclick="copyDynamic('bridgeCreate2')">Copy</button>
+  </div>
+
+  <!-- Dynamic: Remove interface from bridge -->
+  <div class="cmd-block">
+    <code id="bridgeRemove">/interface bridge port remove [find interface=ether1]</code>
+    <label>Interface:</label>
+    <select id="removeInterface" class="inline-select"></select>
+    <button class="copy-btn" onclick="copyDynamic('bridgeRemove')">Copy</button>
+  </div>
+
+  <!-- Dynamic: Add interface to bridge -->
+  <div class="cmd-block">
+    <code id="bridgeAdd">/interface bridge port add bridge=bridge50 interface=ether1</code>
+    <label>Bridge:</label>
+    <select id="bridgeChoice" class="inline-select">
+      <option value="Y0">bridgeY0</option>
+      <option value="Y1">bridgeY1</option>
+    </select>
+    <label>Interface:</label>
+    <select id="addInterface" class="inline-select"></select>
+    <button class="copy-btn" onclick="copyDynamic('bridgeAdd')">Copy</button>
+  </div>
+</div>
+
+
+
+<script>
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  const hostIPs = {
+    TUX3:      "172.16.Y0.1",
+    TUX4_1:    "172.16.Y0.254",
+    TUX2:      "172.16.Y1.1",
+    TUX4_2:    "172.16.Y1.253",
+    Rc_Y1:     "172.16.Y1.254",
+    Rc_FTP:    "172.16.1.Y1",
+    FTP:       "172.16.1.10"
+  };
+
+  const workbenchInput = document.getElementById("workbench");
+  const hostSelector = document.getElementById("host");
+  const hostSelectorMT = document.getElementById("hostMT");
+
+  function resolveIP(template, Y) {
+    return template.replace("Y0", Y + "0").replace("Y1", Y + "1");
+  }
+
+  function updateDynamicCommands() {
+    const Y = parseInt(workbenchInput.value);
+
+    // Ping
+    const ip1 = resolveIP(hostIPs[hostSelector.value], Y);
+    document.getElementById("pingCommand").textContent = `ping ${ip1}`;
+
+    const ip2 = resolveIP(hostIPs[hostSelectorMT.value], Y);
+    document.getElementById("pingMT").textContent = `ping ${ip2}`;
+
+    // if config, configure IP
+    const interEth = document.getElementById("ifConfigInterface").value;
+    const interIP = document.getElementById("ifConfigIP").value;
+    const finalIP = resolveIP(interIP, Y);
+    document.getElementById("ifConfigCommand").textContent = `sudo ifconfig ${interEth} ${finalIP}`;
+
+    // Route add
+    const destRaw = document.getElementById("routeDest").value;
+    const dest = resolveIP(destRaw, Y);
+    const gw = resolveIP(hostIPs[document.getElementById("routeGW").value], Y);
+    document.getElementById("routeAdd").textContent = `sudo ip route add ${dest} via ${gw}`;
+
+    // Route del
+    const delDestRaw = document.getElementById("routeDelDest").value;
+    const delDest = resolveIP(delDestRaw, Y);
+    document.getElementById("routeDel").textContent = `sudo ip route del ${delDest}`;
+  }
+
+  function copyPing() {
+    navigator.clipboard.writeText(document.getElementById("pingCommand").textContent).then(() => {
+      const btn = event.target;
+      btn.textContent = "Copied!";
+      setTimeout(() => btn.textContent = "Copy", 1500);
+    });
+  }
+
+  function copyPingMT() {
+    navigator.clipboard.writeText(document.getElementById("pingMT").textContent).then(() => {
+      const btn = event.target;
+      btn.textContent = "Copied!";
+      setTimeout(() => btn.textContent = "Copy", 1500);
+    });
+  }
+
+  function copyDynamic(id) {
+    const content = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(content).then(() => {
+      const btn = event.target;
+      btn.textContent = "Copied!";
+      setTimeout(() => btn.textContent = "Copy", 1500);
+    });
+  }
+
+  // Events
+  ["input", "change"].forEach(eventType => {
+    workbenchInput.addEventListener(eventType, updateDynamicCommands);
+    hostSelector.addEventListener(eventType, updateDynamicCommands);
+    hostSelectorMT.addEventListener(eventType, updateDynamicCommands);
+    document.getElementById("ifConfigInterface").addEventListener(eventType, updateDynamicCommands);
+    document.getElementById("ifConfigIP").addEventListener(eventType, updateDynamicCommands);
+    document.getElementById("routeDest").addEventListener(eventType, updateDynamicCommands);
+    document.getElementById("routeGW").addEventListener(eventType, updateDynamicCommands);
+    document.getElementById("routeDelDest").addEventListener(eventType, updateDynamicCommands);
+  });
+
+
+  function populateInterfaces(selectId) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = "";
+    for (let i = 1; i <= 24; i++) {
+        const opt = document.createElement("option");
+        opt.value = `ether${i}`;
+        opt.text = `ether${i}`;
+        select.appendChild(opt);
+    }
+  }
+
+    function updateSwitchCommands() {
+    const Y = parseInt(workbenchInput.value);
+
+    // Bridge creation (use dynamic Y0/Y1)
+    document.getElementById("bridgeCreate").textContent = `/interface bridge add name=bridge${Y}0`;
+    document.getElementById("bridgeCreate2").textContent = `/interface bridge add name=bridge${Y}1`;
+
+    // Remove interface
+    const ifaceRemove = document.getElementById("removeInterface").value;
+    document.getElementById("bridgeRemove").textContent =
+        `/interface bridge port remove [find interface=${ifaceRemove}]`;
+
+    // Add to bridge
+    const bridgeSuffix = document.getElementById("bridgeChoice").value;
+    const ifaceAdd = document.getElementById("addInterface").value;
+    document.getElementById("bridgeAdd").textContent =
+        `/interface bridge port add bridge=bridge${Y}${bridgeSuffix[1]} interface=${ifaceAdd}`;
+    }
+
+    // Populate dropdowns once
+    ["removeInterface", "addInterface"].forEach(id => populateInterfaces(id));
+
+    // Hook into updates
+    ["workbench", "removeInterface", "bridgeChoice", "addInterface"].forEach(id =>
+    document.getElementById(id).addEventListener("change", updateSwitchCommands)
+    );
+
+  updateDynamicCommands(); // initialize
+</script>
+
+</body>
+</html>
