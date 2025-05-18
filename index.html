@@ -115,7 +115,7 @@
   </div>
 </div>
 
-<!-- MikroTik Tab -->
+<!-- MikroTik Router Tab -->
 <div id="mikrotik" class="tab-content">
   <div class="cmd-block"><code>/ip address print</code><button class="copy-btn">Copy</button></div>
   <div class="cmd-block"><code>/ip address add address=&lt;ip&gt;/24 interface=&lt;interface&gt;</code><button class="copy-btn">Copy</button></div>
@@ -143,6 +143,10 @@
 </div>
 
 <div id="switch" class="tab-content">
+  <div class="cmd-block">
+    <code id="ResetConf">/system reset-configuration</code>
+    <button class="copy-btn" onclick="copyDynamic('ResetConf')">Copy</button>
+  </div>
   <!-- Dynamic: Create bridges -->
   <div class="cmd-block">
     <code id="bridgeCreate">/interface bridge add name=bridge50</code>

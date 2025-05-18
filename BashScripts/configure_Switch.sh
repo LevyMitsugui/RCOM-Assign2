@@ -11,7 +11,7 @@
 /interface bridge port remove [find interface=ether14]
 /interface bridge port remove [find interface=ether24]
 
-/interface bridge port add bridge=bridge50 interface=ether10
+/interface bridge port add bridge=bridge50 interface=ether14
 /interface bridge port add bridge=bridge50 interface=ether13
 
 /interface bridge port add bridge=bridge51 interface=ether1
