@@ -198,7 +198,17 @@ int read_response(int sockfd, char *buffer, size_t size) {
     int bytes = recv(sockfd, buffer, size - 1, 0);
     if (bytes < 0) return -1;
     buffer[bytes] = '\0';
-    int code = atoi(buffer);
+
+    char code_str[4] = {0}; // To hold the 3-digit code and null terminator
+    if (bytes < 3) {
+        fprintf(stderr, "Received too short response: %d bytes\n", bytes);
+        return -1;
+    }
+
+    strncpy(code_str, buffer, 3);
+    code_str[4] = '\0';
+
+    int code = atoi(code_str);
     printf("Code from server: %d\n", code);
     return code;  // Parse 3-digit code at start
 }
