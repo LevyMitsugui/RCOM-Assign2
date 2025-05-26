@@ -24,7 +24,7 @@ route -n
 # Perguntar se deseja limpar a tabela ARP
 echo -n "Deseja limpar a tabela ARP? (y/n): "
 read answer
-if [[ "$answer" == "y" || "$answer" == "n" ]]; then
+if [[ "$answer" == "y"]]; then
     echo "Limpando a tabela ARP..."
     ip -s -s neigh flush all
 else

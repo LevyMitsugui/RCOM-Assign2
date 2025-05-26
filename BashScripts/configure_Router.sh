@@ -7,3 +7,8 @@
 
 /ip route add dst-address=0.0.0.0/0 gateway=172.16.1.254
 /ip route add dst-address=172.16.50.0/24 gateway=172.16.51.253
+
+
+/ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade
+/ip firewall nat print
+
