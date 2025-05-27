@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <ctype.h>
 
 #define MAX_FIELD 256
 
@@ -35,6 +36,7 @@ int connect_data_socket(const char *ip, int port);
 int retrieve_file(int ctrl_sock, int data_sock, const char *remote_path, const char *local_filename);
 const char *get_filename_from_path(const char *path);
 long get_file_size(int ctrl_sock, const char *remote_path);
+void flush_control_socket(int sockfd);
 void print_progress_bar(long current, long total);
 
 int main(int argc, char *argv[]) {
@@ -89,13 +91,15 @@ int main(int argc, char *argv[]) {
     int data_port;
     if(enter_passive_mode(sockfd, data_ip, &data_port)==0){
 
-
         int data_sock = connect_data_socket(data_ip, data_port);
         if (data_sock >= 0) {
             const char *filename = get_filename_from_path(info.path);
             retrieve_file(sockfd, data_sock, info.path, filename);
         }
-    }
+    } else {
+        printf("enter_passive_mode() failed\n");
+        }
+    
     
     /**
     * The struct hostent (host entry) with its terms documented
@@ -196,6 +200,7 @@ int send_command(int sockfd, const char *cmd) {
 
 int read_response(int sockfd, char *buffer, size_t size) {
     size_t total = 0;
+    char code_str[4];
     int code = 0;
     int multi_line = 0;
 
@@ -211,7 +216,10 @@ int read_response(int sockfd, char *buffer, size_t size) {
         while (line < buffer + total) {
             if (isdigit(line[0]) && isdigit(line[1]) && isdigit(line[2])) {
                 if (line[3] == ' ') {
-                    code = atoi(line);  // Final response line
+                    strncpy(code_str, line, 3);
+                    code_str[3] = '\0';
+                    code = atoi(code_str);  // Final response line
+                    printf("Code from server: %d\n", code);
                     return code;
                 } else if (line[3] == '-') {
                     multi_line = atoi(line);  // Start of multi-line
@@ -224,8 +232,8 @@ int read_response(int sockfd, char *buffer, size_t size) {
             line = next + 1;
         }
     }
-
-    return 0;  // If we never found a valid response line
+    
+    return 0;
 }
 
 int login(int sockfd, const char *user, const char *password) {
@@ -391,6 +399,15 @@ long get_file_size(int ctrl_sock, const char *remote_path) {
     long size = 0;
     sscanf(buffer, "213 %ld", &size);
     return size;
+}
+
+void flush_control_socket(int sockfd){
+    char buffer[512];
+    int bytes;
+    
+    while((bytes = recv(sockfd,buffer,sizeof(buffer), MSG_DONTWAIT)>0)){
+        
+    }   
 }
 
 void print_progress_bar(long current, long total) {
