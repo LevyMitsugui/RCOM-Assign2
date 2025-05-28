@@ -273,6 +273,9 @@ int login(int sockfd, const char *user, const char *password) {
 }
 
 int enter_passive_mode(int ctrl_sock, char *pasv_ip, int *pasv_port) {
+
+    //TODO if error persists, try adding control socket flush.
+
     char buffer[1024];
     send(ctrl_sock, "PASV\r\n", strlen("PASV\r\n"), 0);
 

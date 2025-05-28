@@ -18,18 +18,9 @@ route add -net 172.16.51.0/24 gw 172.16.50.254 # TUX4 eth1
 
 # Add route for 172.16.1.0/24 via gateway 172.16.51.254
 echo "Adicionando rota para a rede 172.16.1.0/24 via gateway 172.16.51.254 (router)..."
-route add -net 172.16.1.0/24 gw 172.16.51.254 # router
+route add -net 172.16.1.0/24 gw 172.16.50.254 # router
 route -n
 
-# Perguntar se deseja limpar a tabela ARP
-echo -n "Deseja limpar a tabela ARP? (y/n): "
-read answer
-if [[ "$answer" == "y"]]; then
-    echo "Limpando a tabela ARP..."
-    ip -s -s neigh flush all
-else
-    echo "Tabela ARP não foi limpa."
-fi
 
 # Mensagem final
 echo "Configuração de rede concluída!"
